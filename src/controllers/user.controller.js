@@ -12,7 +12,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
         const accessToken = user.generateAccessToken()
         const refreshToken = user.generateRefreshToken()
 
-        user.refreshToken =  
+        user.refreshToken = refreshToken
         await user.save({ validateBeforeSave: false })
 
         return { accessToken, refreshToken }
@@ -148,8 +148,8 @@ const logoutUser = asyncHandler(async (req,res)=> {
     await User.findByIdAndUpdate(
         req.user._id,
         {
-            $set: {
-                refreshToken: undefined
+            $unset: {
+                refreshToken: 1 // this removes the field from the document
             }
         },
         {
@@ -190,11 +190,11 @@ const refreshAccessToken = asyncHandler(async(req,res)=> {
         }
     
         const options = {
-            hhtpOnly:true,
+            httpOnly:true,
             secure:true
         }
     
-        const {accessToken, newRefreshToken} = await generateAccessAndRefreshTokens(user?._id)
+        const {accessToken, refreshToken: newRefreshToken} = await generateAccessAndRefreshTokens(user?._id)
     
         return res
         .status(200)
@@ -232,64 +232,62 @@ const changeCurrentPassword = asyncHandler(async(req,res)=> {
     .json(new ApiResponse(200, {}, "Password is Changed Successfully"))
 })
 
-const getCurrentUser = asyncHandler(async(req, res)=> {
+const getCurrentUser = asyncHandler(async(req, res) => {
     return res
-    .status(200)
-    .json(200, req.user, "Current user fetched Successfully")
+        .status(200)
+        .json(new ApiResponse(200, req.user, "Current user fetched Successfully"))
 })
 
-const updateAccountDetails = asyncHandler(async(req,res)=> {
-    const {fullname, email } = req.body
+const updateAccountDetails = asyncHandler(async (req, res) => {
+    const { fullname, email } = req.body || {}
 
-    if(!(fullname || email)) {
+    if (!(fullname || email)) {
         throw new ApiError(400, "All fields are required!")
     }
 
-   const user = User.findByIdAndUpdate(
-    req.user?._id,
-    {
-        $set : {
-            fullname: fullname,
-            email: email
-        }
-    },
-    {new: true}
+    const updateFields = {}
+    if (fullname) updateFields.fullname = fullname
+    if (email) updateFields.email = email
+
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        { $set: updateFields },
+        { new: true }
     ).select("-password")
 
-    return
-    res.status(200)
-    .json(new ApiResponse(200, user, "Account details updated successfully!!"))
+    return res
+        .status(200)
+        .json(new ApiResponse(200, user, "Account details updated successfully!!"))
 })
 
-const updateUserAvatar = asyncHandler(async(req, res)=> {
+const updateUserAvatar = asyncHandler(async (req, res) => {
     const avatarLocalPath = req.file?.path
 
-    if(!avatarLocalPath){
+    if (!avatarLocalPath) {
         throw new ApiError(400, "Avatar file is missing")
     }
 
-   const avatar = await uploadOnCloudinary(avatarLocalPath)
+    const avatar = await uploadOnCloudinary(avatarLocalPath)
 
-   if(!avatar.url){
-    throw new ApiError(400, "Error while uploading on avatar")
-   }
+    if (!avatar?.url) {
+        throw new ApiError(400, "Error while uploading avatar")
+    }
 
-   const user = await User.findByIdAndUpdate(
-    req.user?._id,
-    {
-        $set: {
-            avatar: avatar.url
-        }
-    },
-    {new: true}).select("-password")
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: {
+                avatar: avatar.url
+            }
+        },
+        { new: true }
+    ).select("-password -refreshToken")
 
     return res
-    .status(200)
-    .json(
-        new ApiResponse(200, user, "Avatar is updated successfully!")
-    )
-
+        .status(200)
+        .json(new ApiResponse(200, user, "Avatar is updated successfully!"))
 })
+
 
 const updateUserCoverImage = asyncHandler(async(req, res)=> {
     const coverImageLocalPath = req.file?.path
@@ -359,10 +357,11 @@ const getUserChannelProfile = asyncHandler(async(req,res)=> {
                 },
                 isSubscribed:{
                     $cond:{
-                        if: {$in: [req.user?._id, "subscribers.subscriber"]}
-                    },
+                        if: { $in: [req.user?._id, "$subscribers.subscriber"] }
+                    ,
                     then: true,
                     else:false
+                    }
                 }
             }
         },
