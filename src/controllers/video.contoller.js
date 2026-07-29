@@ -5,6 +5,9 @@ import { asyncHandler } from "../utils/asyncHandler.js"
 import {User} from "../models/user.models.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js"
+import { Comment } from "../models/comment.models.js"
+import { Like } from "../models/like.models.js"
+import { Playlist } from "../models/playlist.models.js"
 
 const getAllVideos = asyncHandler(async(req , res)=> {
     const { page=1, limit=10, query, sortBy, sortType, userId} = req.query
@@ -210,10 +213,43 @@ const updateVideo = asyncHandler(async(req,res)=> {
     .json(new ApiResponse(200, updatedVideo, "Video updated successfully"))
 })
 
+const deleteVideo = asyncHandler(async(req, res)=> {
+    const {videoId} = req.params
+
+    if(!isValidObjectId(videoId)) {
+        throw new ApiError(400, "Invalid video Id")
+    }
+
+    const video = Video.findById(videoId)
+
+    if(!video) {
+        throw new ApiError(404, "Video not Found!")
+    }
+
+    if(video.owner.toString()!== req.user._id.toString){
+        throw new ApiError(403, "You cannot delete someone else's video")
+    }
+
+    await Video.findByIdAndDelete(videoId)
+
+    await deleteFromCloudinary(video.videoFilePublicId, "video")
+    await deleteFromCloudinary(video.thumbnailPublicId, "image")
+
+    await Comment.deleteMany({video: videoId})
+    await Like.deleteMany({video:videoId})
+
+    await Playlist.updateMany({ videos: videoId }, { $pull: { videos: videoId } })
+    await User.updateMany({ watchHistory: videoId }, { $pull: { watchHistory: videoId } })
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, {}, "Video deleted successfully"))
+})
+
 export {
     getAllVideos,
     publishAVideo,
     getVideoById,
     updateVideo,
-
+    deleteVideo,
 }
