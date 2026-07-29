@@ -163,9 +163,56 @@ const getVideoById = asyncHandler(async(req, res)=> {
     .json(new  ApiResponse(200, video, "Video fetched Successfully!"))
 })
 
+const updateVideo = asyncHandler(async(req,res)=> {
+    const {videoId} = req.params
+    const {title,description} = req.body
+    const thumbnailLocalPath = req.file?.path
+
+    if (!isValidObjectId(videoId)) {
+        throw new ApiError(400, "Invalid video id")
+    }
+
+    if (!title?.trim() && !description?.trim() && !thumbnailLocalPath) {
+        throw new ApiError(400, "At least one field is required to update")
+    }
+    const video = Video.findById(videoId)
+
+    if(!video) {
+        throw new ApiError(404, "Video not Found!")
+    }
+    if(video.owner.toString() !== req.user._id.toString()){
+        throw new ApiError(403, "You cannot edit someone else's video!")
+    }
+    const updateFields = {}
+
+    if(title?.trim()) updateFields.title = title.trim()
+    if(description?.trim()) updateFields.description = description.trim()
+
+    let newThumbnail
+    if(thumbnailLocalPath) {
+        newThumbnail = await uploadOnCloudinary(thumbnailLocalPath)
+
+        if(!newThumbnail){
+            throw new ApiError(500, "Failed to upload new Thumbnail on Cloudinary!")
+        }
+
+        updateFields.thumbnail = newThumbnail.url
+    }
+
+    const updatedVideo = await Video.findByIdAndUpdate(
+        videoId,
+        { $set: updateFields },
+        { new: true }
+    )
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, updatedVideo, "Video updated successfully"))
+})
+
 export {
     getAllVideos,
     publishAVideo,
     getVideoById,
-    
+
 }
