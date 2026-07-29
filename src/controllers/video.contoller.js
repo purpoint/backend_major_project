@@ -136,10 +136,36 @@ const getVideoById = asyncHandler(async(req, res)=> {
         throw new ApiError(400, "Invalid video id")
     }
 
-    
+    const video = await Video.findById(videoId).populate(
+        "owner",
+        "username fullname avatar"
+    )
+
+    if(!video) {
+        throw new ApiError(400, "Video not Found!")
+    }
+
+    const isOwner = video.owner._id.toString() === req.user._id.toString()
+
+    if(!video.isPublished && !isOwner) {
+        throw new ApiError(403, "This video is not available")
+    }
+
+    await Video.findByIdAndUpdate(videoId, { $inc: { views : 1}})
+    video.views+=1
+
+    await User.findByIdAndUpdate(req.user._id,{
+        $addToSet: {watchHistory : video._id}
+    })
+
+    return res
+    .status(201)
+    .json(new  ApiResponse(200, video, "Video fetched Successfully!"))
 })
 
 export {
     getAllVideos,
-    publishAVideo
+    publishAVideo,
+    getVideoById,
+    
 }
