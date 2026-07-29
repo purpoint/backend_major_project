@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js"
 import { asyncHandler } from "../utils/asyncHandler.js"
 import {User} from "../models/user.models.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
+import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js"
 
 const getAllVideos = asyncHandler(async(req , res)=> {
     const { page=1, limit=10, query, sortBy, sortType, userId} = req.query
@@ -39,7 +40,7 @@ const getAllVideos = asyncHandler(async(req , res)=> {
     }
 
 
-    const videos = Video.aggregate([
+    const videoAggregate = Video.aggregate([
         {$match: matchStage},
         {$sort: sortStage},
         {
@@ -73,3 +74,63 @@ const getAllVideos = asyncHandler(async(req , res)=> {
         .json(new ApiResponse(200, videos, "Videos fetched successfully"))
 
 })
+
+const publishAVideo = asyncHandler(async(req,res)=> {
+    const {title, description} = req.body
+
+    if(!title?.trim() || !description?.trim()) {
+        throw new ApiError(400, "Title and description are mandatory..")
+    }
+
+    const videoFileLocalPath = req.files?.videoFile?.[0]?.path
+    const thumbnailLocalPath = req.files?.thumbnail?.[0]?.path
+
+    if(!videoFileLocalPath){
+        throw new ApiError(400, "Video file is required!!")
+    }
+
+    if(!thumbnailLocalPath) {
+        throw new ApiError(400, "Thumbnail is required!!")
+    }
+
+    const videoFile = await uploadOnCloudinary(videoFileLocalPath)
+
+    if(!videoFile) {
+        throw new ApiError(500, "Failed to upload Video file on Cloudinary")
+    }
+
+    const thumbnail = await uploadOnCloudinary(thumbnailLocalPath)
+
+    if(!thumbnail) {
+        await deleteFromCloudinary(videoFile.public_id, "video")
+        throw new ApiError(500, "Failed to upload Thumnail file on Coudinary")
+    }
+
+    const video = await Video.create({
+        title: title.trim(),
+        description: description.trim(),
+        videoFile: videoFile.url,
+        thumbnail: thumbnail.url,
+        duration: videoFile.duration,
+        owner: req.user._id,
+        isPublished: true
+    })
+
+    if (!video) {
+        await deleteFromCloudinary(videoFile.public_id, "video")
+        await deleteFromCloudinary(thumbnail.public_id, "image")
+        throw new ApiError(500, "Something went wrong while saving the video")
+    }
+
+    return res
+    .status(201)
+    .json(new ApiResponse(201, video, "Video Published Successfully!!"
+    ))
+
+})
+
+
+export {
+    getAllVideos,
+    publishAVideo
+}
