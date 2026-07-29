@@ -1,0 +1,459 @@
+{
+  "info": {
+    "_postman_id": "d75d680e-80c6-46fb-ab99-0c7c5c1c07cc",
+    "name": "backend_fullstack",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "53212788",
+    "_collection_link": "https://go.postman.co/collection/53212788-d75d680e-80c6-46fb-ab99-0c7c5c1c07cc?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "user",
+      "item": [
+        {
+          "name": "register",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "email",
+                  "value": "manan@patel.com",
+                  "type": "text",
+                  "uuid": "6c274d62-7c15-44c3-8c03-53465e20df8c"
+                },
+                {
+                  "key": "coverImage",
+                  "type": "file",
+                  "uuid": "879d3e68-6c94-473b-ab53-6dd0ec25f7f2",
+                  "src": "/Users/manannghodasara/Downloads/IMG_521369-3.jpg"
+                },
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "uuid": "255ecc2a-30e6-45b5-bf35-10bf06e4f1b4",
+                  "src": "/Users/manannghodasara/Downloads/WhatsApp Image 2026-06-15 at 15.25.18.jpeg"
+                },
+                {
+                  "key": "username",
+                  "value": "manan_6517",
+                  "type": "text",
+                  "uuid": "ef9217d2-b6c8-409b-a3db-bda73d51dbb6"
+                },
+                {
+                  "key": "password",
+                  "value": "123456789",
+                  "type": "text",
+                  "uuid": "030c2c3c-3629-4e6f-b91f-28faa96747fa"
+                },
+                {
+                  "key": "fullname",
+                  "value": "Manan Patel",
+                  "type": "text",
+                  "uuid": "1dcfa77c-13db-4af4-82d1-6d5b2b832033"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{server}}/users/register",
+              "host": [
+                "{{server}}"
+              ],
+              "path": [
+                "users",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\":\"manan@patel.com\",\n    \"password\":\"123456789\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{server}}/users/login",
+              "host": [
+                "{{server}}"
+              ],
+              "path": [
+                "users",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{server}}/users/logout",
+              "host": [
+                "{{server}}"
+              ],
+              "path": [
+                "users",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "refresh-token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{server}}/users/refresh-token",
+              "host": [
+                "{{server}}"
+              ],
+              "path": [
+                "users",
+                "refresh-token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "current-user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{server}}/users/current-user",
+              "host": [
+                "{{server}}"
+              ],
+              "path": [
+                "users",
+                "current-user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "change-password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oldPassword\": \"12345678\",\n  \"newPassword\": \"prachibhushan\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{server}}/users/change-password",
+              "host": [
+                "{{server}}"
+              ],
+              "path": [
+                "users",
+                "change-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update-accountt",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullname\": \"Prachi B\",\n  \"email\": \"pb@gmail.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{server}}/users/update-account",
+              "host": [
+                "{{server}}"
+              ],
+              "path": [
+                "users",
+                "update-account"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "avatar",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "uuid": "6ea8df36-acbb-49c3-aa9a-402d4d82023e",
+                  "src": "/Users/manannghodasara/Downloads/smiling-young-man-illustration_1308-174669.avif"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{server}}/users/avatar",
+              "host": [
+                "{{server}}"
+              ],
+              "path": [
+                "users",
+                "avatar"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "coverImage",
+          "request": {
+            "method": "PATCH",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "username-details",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": []
+            },
+            "url": {
+              "raw": "{{server}}/users/c/prachi_12345",
+              "host": [
+                "{{server}}"
+              ],
+              "path": [
+                "users",
+                "c",
+                "prachi_12345"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "watch-history",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "video",
+      "item": [
+        {
+          "name": "publish video",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "title",
+                  "value": "Deploying with Docker",
+                  "type": "text",
+                  "uuid": "e8ae97de-80a4-4dbd-b772-0d1309d33951"
+                },
+                {
+                  "key": "description",
+                  "value": "Containers, images, and compose basics",
+                  "type": "text",
+                  "uuid": "4622c0c9-5a3d-4458-a867-a846ee02e198"
+                },
+                {
+                  "key": "videoFile",
+                  "type": "file",
+                  "uuid": "344a57e6-ff5d-466c-b17b-1836a5c6b005",
+                  "src": "/Users/manannghodasara/test-assets/video3.mp4"
+                },
+                {
+                  "key": "thumbnail",
+                  "type": "file",
+                  "uuid": "bd236118-527b-491b-a69e-c57e67d7898d",
+                  "src": "/Users/manannghodasara/test-assets/thumbnail.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{server}}/videos",
+              "host": [
+                "{{server}}"
+              ],
+              "path": [
+                "videos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all videos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{server}}/videos",
+              "host": [
+                "{{server}}"
+              ],
+              "path": [
+                "videos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "video by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{server}}/videos/{{videoId}}",
+              "host": [
+                "{{server}}"
+              ],
+              "path": [
+                "videos",
+                "{{videoId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update video",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "title",
+                  "value": "Updated Node Tutorial",
+                  "type": "text",
+                  "uuid": "123e8b46-2866-4e2c-80d9-b472731c2231",
+                  "disabled": true
+                },
+                {
+                  "key": "description",
+                  "value": "",
+                  "type": "text",
+                  "uuid": "2f461794-bf55-4527-8dec-73b7ec297ae8",
+                  "disabled": true
+                },
+                {
+                  "key": "thumbnail",
+                  "type": "file",
+                  "uuid": "975dec7f-6c6f-4283-9ae3-88fef6c2ab1f",
+                  "src": "/Users/manannghodasara/test-assets/thumbnail.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{server}}/videos/{{videoId}}",
+              "host": [
+                "{{server}}"
+              ],
+              "path": [
+                "videos",
+                "{{videoId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "toggle publish status",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{server}}/videos/toggle/publish/{{videoId}}",
+              "host": [
+                "{{server}}"
+              ],
+              "path": [
+                "videos",
+                "toggle",
+                "publish",
+                "{{videoId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deleteVideo",
+          "request": {
+            "method": "DELETE",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
