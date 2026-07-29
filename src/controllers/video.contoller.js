@@ -175,7 +175,7 @@ const updateVideo = asyncHandler(async(req,res)=> {
     if (!title?.trim() && !description?.trim() && !thumbnailLocalPath) {
         throw new ApiError(400, "At least one field is required to update")
     }
-    const video = Video.findById(videoId)
+    const video = await Video.findById(videoId)
 
     if(!video) {
         throw new ApiError(404, "Video not Found!")
@@ -214,5 +214,6 @@ export {
     getAllVideos,
     publishAVideo,
     getVideoById,
+    updateVideo,
 
 }
