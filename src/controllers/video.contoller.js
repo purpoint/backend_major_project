@@ -220,13 +220,13 @@ const deleteVideo = asyncHandler(async(req, res)=> {
         throw new ApiError(400, "Invalid video Id")
     }
 
-    const video = Video.findById(videoId)
+    const video = await Video.findById(videoId)
 
     if(!video) {
         throw new ApiError(404, "Video not Found!")
     }
 
-    if(video.owner.toString()!== req.user._id.toString){
+    if(video.owner.toString()!== req.user._id.toString()){
         throw new ApiError(403, "You cannot delete someone else's video")
     }
 
