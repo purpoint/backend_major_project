@@ -5,9 +5,9 @@ import { asyncHandler } from "../utils/asyncHandler.js"
 import {User} from "../models/user.models.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js"
-import { Comment } from "../models/comment.models.js"
-import { Like } from "../models/like.models.js"
-import { Playlist } from "../models/playlist.models.js"
+import { Comment } from "../models/comments.models.js"
+import { Like } from "../models/likes.models.js"
+import { Playlist } from "../models/playlists.models.js"
 
 const getAllVideos = asyncHandler(async(req , res)=> {
     const { page=1, limit=10, query, sortBy, sortType, userId} = req.query
@@ -283,4 +283,5 @@ export {
     getVideoById,
     updateVideo,
     deleteVideo,
+    togglePublishStatus
 }
