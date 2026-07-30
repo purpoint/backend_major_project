@@ -171,5 +171,5 @@ export {
     getVideoComments,
     addComment,
     updateComment,
-
+    deleteComment
 }
