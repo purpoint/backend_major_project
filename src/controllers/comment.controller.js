@@ -109,7 +109,41 @@ const addComment = asyncHandler(async(req,res)=> {
 
 })
 
+const updateComment = asyncHandler(async(req,res)=>{
+    const {commentId} = req.params
+    const {content} = req.body
+
+    if(!isValidObjectId(commentId)){
+        throw new ApiError(400, "Invalid Comment Id")
+    }
+
+    if(!content?.trim()){
+        throw new ApiError(400, "Content is required")
+    }
+
+    const comment = await Comment.findById(commentId)
+
+    if(!comment) {
+        throw new ApiError(404,"Comment not Found!!")
+    }
+
+    if(comment.owner.toString()!== req.user._id.toString()){
+        throw new ApiError(403, "You cannot edit someone else's comment")
+    }
+
+    const updateComment = await Comment.findByIdAndUpdate(
+        commentId,
+        {$set: {content: content.trim()}},
+        {new: true}
+    )
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, updateComment, "Comment updated Successfully!"))
+})
+
 export {
     getVideoComments,
-
+    addComment,
+    updateComment
 }
