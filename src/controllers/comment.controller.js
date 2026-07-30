@@ -142,8 +142,34 @@ const updateComment = asyncHandler(async(req,res)=>{
     .json(new ApiResponse(200, updateComment, "Comment updated Successfully!"))
 })
 
+const deleteComment = asyncHandler(async(req,res)=> {
+    const {commentId} = req.params
+
+    if(!isValidObjectId(commentId)) {
+        throw new ApiError(400, "Invalid Comment Id")
+    }
+
+    const comment = await Comment.findById(commentId)
+
+    if(!comment) {
+        throw new ApiError(404, "Comment not found!")
+    }
+
+    if(comment.owner.toString()!== req.user._id.toString()) {
+        throw new ApiError(403, "You cannot delete someone else's comment")
+    }
+
+    await Comment.findByIdAndDelete(commentId)
+    await Like.deleteMany({comment:commentId})
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Comment deleted Successfully!"))
+})
+
 export {
     getVideoComments,
     addComment,
-    updateComment
+    updateComment,
+
 }
