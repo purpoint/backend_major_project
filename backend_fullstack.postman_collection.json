@@ -454,6 +454,132 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "comment",
+      "item": [
+        {
+          "name": "addComment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"content\": \"Watched this twice, still solid\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{server}}/comments/{{videoId}}",
+              "host": [
+                "{{server}}"
+              ],
+              "path": [
+                "comments",
+                "{{videoId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getVideoComments",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{server}}/comments/{{videoId}}",
+              "host": [
+                "{{server}}"
+              ],
+              "path": [
+                "comments",
+                "{{videoId}}"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "999999",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "2",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updateComment",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"content\": \"Updated my comment after rewatching\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{server}}/comments/c/{{commentId}}",
+              "host": [
+                "{{server}}"
+              ],
+              "path": [
+                "comments",
+                "c",
+                "{{commentId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deleteComment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"content\": \"Updated my comment after rewatching\" }"
+            },
+            "url": {
+              "raw": "{{server}}/comments/c/{{commentId}}",
+              "host": [
+                "{{server}}"
+              ],
+              "path": [
+                "comments",
+                "c",
+                "{{commentId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }
